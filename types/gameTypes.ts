@@ -13,6 +13,12 @@ export type Tetromino = {
   rotation: number;
 };
 
+export interface Score {
+  score: number;
+  level: number;
+  date: string;
+}
+
 export type TetrominoType = 'I' | 'O' | 'T' | 'S' | 'Z' | 'J' | 'L';
 
 export type Position = {

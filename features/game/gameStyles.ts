@@ -121,6 +121,12 @@ export const useGameStyles = () => {
       alignItems: 'center',
       flex: 1,
     },
+    buttonContainer: {
+      justifyContent: 'space-between',
+      flexDirection: 'row',
+      width: '100%',
+      marginTop: 20,
+    },
     nextPieceCell: {
       backgroundColor: colors.dark,
       borderRadius: 2,
@@ -128,13 +134,13 @@ export const useGameStyles = () => {
       width: 18,
       margin: 1,
     },
+
     horizontalControls: {
       justifyContent: 'center',
       flexDirection: 'row',
       alignItems: 'center',
       gap: 20,
     },
-
     sideControlsWrapper: {
       justifyContent: 'center',
       alignItems: 'center',
@@ -147,19 +153,32 @@ export const useGameStyles = () => {
       marginBottom: 8,
       fontSize: 16,
     },
+
     modalTitle: {
       fontWeight: 'bold',
       color: colors.text,
       marginBottom: 24,
       fontSize: 28,
     },
-
+    button: {
+      paddingHorizontal: 20,
+      paddingVertical: 10,
+      borderRadius: 8,
+      minWidth: 100,
+    },
     scoreLabel: {
       color: colors.text,
       fontWeight: '600',
       marginBottom: 8,
       fontSize: 16,
     },
+    buttonText: {
+      textAlign: 'center',
+      fontWeight: '600',
+      color: '#fff',
+      fontSize: 16,
+    },
+
     // Controls
     bottomControlsContainer: {
       justifyContent: 'center',
@@ -177,7 +196,6 @@ export const useGameStyles = () => {
       alignItems: 'center',
       flex: 1,
     },
-
     scoreText: {
       color: colors.primary,
       fontWeight: 'bold',
@@ -194,6 +212,12 @@ export const useGameStyles = () => {
     },
     restartButton: {
       backgroundColor: colors.danger,
+    },
+    discardButton: {
+      backgroundColor: '#f44336',
+    },
+    saveButton: {
+      backgroundColor: '#4CAF50',
     },
   });
 };

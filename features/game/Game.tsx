@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { Pressable, Modal, Text, View } from 'react-native';
 
 import { ControlButton, GameControls } from './components/GameControls';
+import GameOverScores from './components/GameOverScores';
 import { NextPiece } from './components/NextPiece';
 import { useGameStyles } from './gameStyles';
 import Grid from './Grid';
@@ -12,6 +13,8 @@ import Settings from './Settings';
 
 const Game = () => {
   const [isStarted, setIsStarted] = useState(false);
+  const [showSaveScoreModal, setShowSaveScoreModal] = useState(false);
+
   const styles = useGameStyles();
 
   const { gameInterval, isGameOver, resumeGame, startGame, pauseGame, isPaused, settings, score } =
@@ -22,6 +25,12 @@ const Game = () => {
       return () => clearInterval(gameInterval);
     }
   }, [gameInterval]);
+
+  useEffect(() => {
+    if (isGameOver) {
+      setShowSaveScoreModal(true);
+    }
+  }, [isGameOver]);
 
   const handleGameStart = () => {
     if (settings.haptics) {
@@ -88,8 +97,34 @@ const Game = () => {
       <Modal visible={isGameOver} animationType="fade" transparent={false}>
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Game Over!</Text>
-            <ControlButton onPress={handleGameStart} icon="play.fill" />
+            {showSaveScoreModal ? (
+              <>
+                <Text style={styles.modalTitle}>Save Score?</Text>
+                <Text style={styles.scoreText}>Score: {score}</Text>
+                <View style={styles.buttonContainer}>
+                  <Pressable
+                    onPress={async () => {
+                      await useGameStore.getState().saveScore();
+                      setShowSaveScoreModal(false);
+                    }}
+                    style={[styles.button, styles.saveButton]}
+                  >
+                    <Text style={styles.buttonText}>Save</Text>
+                  </Pressable>
+                  <Pressable
+                    style={[styles.button, styles.discardButton]}
+                    onPress={() => setShowSaveScoreModal(false)}
+                  >
+                    <Text style={styles.buttonText}>Discard</Text>
+                  </Pressable>
+                </View>
+              </>
+            ) : (
+              <>
+                <GameOverScores />
+                <ControlButton onPress={handleGameStart} icon="play.fill" />
+              </>
+            )}
           </View>
         </View>
       </Modal>

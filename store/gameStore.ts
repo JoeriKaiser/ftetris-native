@@ -1,3 +1,5 @@
+import { SCORES_STORAGE_KEY } from '@/constants/Domain';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
 
 import {
@@ -8,7 +10,7 @@ import {
   TETROMINOES,
   GRID_WIDTH,
 } from '../constants/Values';
-import { TetrominoType, GameState, Tetromino, Position } from '../types/gameTypes';
+import { TetrominoType, GameState, Tetromino, Position, Score } from '../types/gameTypes';
 
 const isWithinBounds = (x: number, y: number): boolean => {
   return x >= 0 && x < GRID_WIDTH && y >= 0 && y < GRID_HEIGHT;
@@ -204,6 +206,8 @@ const lockPiece = (grid: number[][], piece: Tetromino): number[][] => {
 interface GameStore extends GameState {
   updateSetting: <K extends keyof GameSettings>(key: K, value: GameSettings[K]) => void;
   gameInterval: NodeJS.Timeout | null;
+  loadScores: () => Promise<void>;
+  saveScore: () => Promise<void>;
   ghostPiece: Position | null;
   resumeGame: () => void;
   settings: GameSettings;
@@ -213,6 +217,7 @@ interface GameStore extends GameState {
   moveLeft: () => void;
   moveDown: () => void;
   hardDrop: () => void;
+  highScores: Score[];
   rotate: () => void;
   isPaused: boolean;
   tick: () => void;
@@ -296,6 +301,8 @@ export const useGameStore = create<GameStore>()((set, get) => ({
     const { gameInterval } = get();
     if (gameInterval) clearInterval(gameInterval);
 
+    get().loadScores();
+
     const newPiece = getRandomTetromino();
     const emptyGrid = createEmptyGrid();
 
@@ -319,6 +326,24 @@ export const useGameStore = create<GameStore>()((set, get) => ({
       score: 0,
       level: 1,
     });
+  },
+  saveScore: async () => {
+    const { highScores, score, level } = get();
+
+    const newScore: Score = {
+      date: new Date().toISOString(),
+      score,
+      level,
+    };
+
+    const updatedScores = [...highScores, newScore].sort((a, b) => b.score - a.score).slice(0, 10); // Keep only top 10 scores
+
+    try {
+      await AsyncStorage.setItem(SCORES_STORAGE_KEY, JSON.stringify(updatedScores));
+      set({ highScores: updatedScores });
+    } catch (error) {
+      console.error('Error saving scores:', error);
+    }
   },
   moveRight: () => {
     const { currentPiece, grid } = get();
@@ -376,6 +401,16 @@ export const useGameStore = create<GameStore>()((set, get) => ({
     set({ currentPiece: { ...currentPiece, position: newPosition } });
     get().moveDown();
   },
+  loadScores: async () => {
+    try {
+      const savedScores = await AsyncStorage.getItem(SCORES_STORAGE_KEY);
+      if (savedScores) {
+        set({ highScores: JSON.parse(savedScores) });
+      }
+    } catch (error) {
+      console.error('Error loading scores:', error);
+    }
+  },
   pauseGame: () => {
     const { gameInterval } = get();
     if (gameInterval) {
@@ -391,6 +426,7 @@ export const useGameStore = create<GameStore>()((set, get) => ({
       },
     }));
   },
+
   settings: {
     haptics: true,
     // Future settings can be added here
@@ -413,6 +449,8 @@ export const useGameStore = create<GameStore>()((set, get) => ({
   ghostPiece: null,
 
   isPaused: false,
+
+  highScores: [],
 
   score: 0,
 
