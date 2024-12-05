@@ -9,6 +9,7 @@ import {
   GRID_HEIGHT,
   TETROMINOES,
   GRID_WIDTH,
+  TETRIS_BONUS,
 } from '../constants/Values';
 import { TetrominoType, GameState, Tetromino, Position, Score } from '../types/gameTypes';
 
@@ -252,10 +253,16 @@ export const useGameStore = create<GameStore>()((set, get) => ({
       }
 
       const { newGrid: clearedGrid, linesCleared } = clearLines(newGrid);
-      const newScore = score + linesCleared * POINTS_PER_LINE * level;
+
+      const pointsToAdd = linesCleared === 4
+      ? TETRIS_BONUS * level
+      : linesCleared * POINTS_PER_LINE * level;
+
+      const newScore = score + pointsToAdd;
       const newLevel = Math.floor(newScore / (POINTS_PER_LINE * LINES_PER_LEVEL)) + 1;
 
       const nextRandomPiece = getRandomTetromino();
+
       set({
         ghostPiece: getGhostPosition(clearedGrid, nextPiece),
         nextPiece: nextRandomPiece,

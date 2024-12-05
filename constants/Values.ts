@@ -5,6 +5,8 @@ export const SPEED_INCREASE = 0.85;
 export const POINTS_PER_LINE = 100;
 export const LINES_PER_LEVEL = 10;
 
+export const TETRIS_BONUS = 800;
+
 export const TETROMINOES = {
   I: {
     shape: [
