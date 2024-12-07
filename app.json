@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "ftetris-native",
-    "slug": "ftetris-native",
+    "name": "ftetris",
+    "slug": "ftetris",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -15,7 +15,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.jwkaiser.ftetris"
     },
     "web": {
       "bundler": "metro",
@@ -36,6 +37,14 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "864ee8fa-a417-495f-be8e-7d3748222dc9"
+      }
     }
   }
 }
